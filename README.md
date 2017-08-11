@@ -30,7 +30,6 @@ Sample xlsx file in 'sample\sample.xslx'
 
 ## License
 
-Open Source
-<!-- MIT [@Vinmj](http://github.com/vinmj) -->
+MIT [@Vinmj](https://github.com/Vinmj/xlsx-json-lang-manager)
 
 
