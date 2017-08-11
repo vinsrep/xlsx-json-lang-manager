@@ -1,0 +1,17 @@
+{
+  "name": "xlsx-json-lang-manager",
+  "version": "1.0.2",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vinayaka",
+  "license": "ISC",
+  "dependencies": {
+    "csv": "~0.3.6",
+    "fs": "0.0.1-security",
+    "merge-json": "0.1.0-b.3",
+    "xlsx": "^0.11.1"
+  }
+}
