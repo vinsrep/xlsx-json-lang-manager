@@ -1,4 +1,4 @@
-# node-xlsx-json
+# xlsx-json-lang-manager
 
 Easy way to manage language files in one place using xslx/csv.
 
