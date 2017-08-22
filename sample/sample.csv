@@ -1,0 +1,8 @@
+Obj-module	Obj-Entity	Obj-Name	en	fr	jp	Note
+Viewer	msg	msgFailed	Failed	Échoué	??	
+Viewer	msg	msgSuccessful	Successful	Réussi	????	    
+Publisher	msg	msgFailed	Failed	Échoué	??	
+Publisher	msg	msgSuccessful	Successful	Réussi	????	
+Viewer	labels	lblSave	save	sauvegarder	???	
+Viewer	labels	lblCancel	Cancel	Annuler	?????	
+Viewer	labels	lblCancel1	Cancel	Annuler	?????	

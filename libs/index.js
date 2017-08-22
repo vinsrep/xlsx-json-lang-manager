@@ -1,13 +1,14 @@
 var fs = require('fs');
 var xlsx = require('xlsx');
 var cvcsv = require('csv');
-var mergeJSON = require("merge-json") ;
+var mergeJSON = require("merge-json");
+var colors = require("colors");
 
 exports = module.exports = XLSX_json;
 
 function XLSX_json (config, callback) {
   if(!config.input) {
-    console.error("You miss a input file");
+    console.error("Failed To Create Resource JSON files, Details:\nPlease provide details of input file".red.bold);
     process.exit(1);
   }
   var cv = new CV(config, callback);
@@ -17,7 +18,7 @@ function CV(config, callback) {
   var wb = this.load_xlsx(config.input)
   var ws = this.ws(config, wb);
   var csv = this.csv(ws)
-  this.cvjson(csv, config.outputdir, callback)
+  this.cvjson(csv, config.outputdir, callback, config.objectLevel, config.numberOfLanguages, config.allowDuplicateValues? true: false)
 }
 
 CV.prototype.load_xlsx = function(input) {
@@ -36,31 +37,75 @@ CV.prototype.csv = function(ws) {
   return csv_file = xlsx.utils.make_csv(ws)
 }
 
-CV.prototype.cvjson = function (csv, outputdir, callback) {
+CV.prototype.cvjson = function (csv, outputdir, callback, objectLevel, numberOfLanguages, allowDuplicateValues) {
     var langs = [];
-    var objectLevel = 0;
     var nameArray = [];
+    var nameHash = {};
+    var valueHash = {};
     var valueArray = [];
+    var throughError = false;
+    var criticalError = false;
+    var errorMsg = "Failed To Create Resource JSON files, Details: ";
+    try {
     cvcsv().from.string(csv)
       .on('record', function (row, index) {
+          row.splice((objectLevel + numberOfLanguages))
           if (index === 0) {
-              row.forEach(function (element) {
-                  if (element.indexOf('Object') === 0) {
-                      objectLevel++;
-                  }
-                  else {
-                    if(element.length > 0){
+              row.splice(0, objectLevel);
+              row.forEach(function (element, ln) {
+                    if(element.trim().length > 0){
                       langs.push(element);
                     }
-                  }
+                    else{
+                      errorMsg += "\nLanguage name not specified at column "+(objectLevel + ln+1)+"."
+                      criticalError = true;
+                      throughError = true;
+                    }
               }, this);
           }
-          else {
-              nameArray.push(row.splice(0, objectLevel));
+          else if(!criticalError && row.join("").trim().length > 0) {
+              var arryName = row.splice(0, objectLevel);
+              var temploopError = false;
+              arryName.forEach(function(ee){
+                if(temploopError) return;
+                if((ee+"").trim().length === 0 ){
+                  throughError = true;
+                  temploopError = true;
+                  errorMsg += "\nAll the object fields should have value at line " + (index + 1)+ ".";
+                  return;
+                }
+              })
+              if(nameHash[arryName]){
+                throughError = true;
+                errorMsg += "\nObject name hierarchy repeated at line " + (index + 1)+ ".";
+              }
+              else{
+                nameHash[arryName] = index + 1;
+              }
+              nameArray.push(arryName);
+              row.forEach(function(ee, langin){
+                if((ee+"").trim().length === 0 ){
+                  throughError = true;
+                  errorMsg += "\n" + langs[langin] + " should have a value at line " + (index + 1)+ ".";
+                }
+              })
+              if(!allowDuplicateValues){
+                if(valueHash[row[0]]){
+                  throughError = true;
+                  errorMsg +=  "\nValue is repeated at line " + (index + 1) + ", Refer line " + valueHash[row[0]] + ".";
+                }
+                else{
+                  valueHash[row[0]] = index + 1;
+                }
+              }
               valueArray.push(row);
           }
       })
       .on('end', function (count) {
+          if(throughError){
+            console.log(errorMsg.red.bold);
+            return;
+          }
           for (var m = 0; m < langs.length; m++) {
               var result = {};
               nameArray.forEach(function (element, index) {
@@ -82,7 +127,9 @@ CV.prototype.cvjson = function (csv, outputdir, callback) {
                   var stream = fs.createWriteStream(output, { flags: 'w' });
                   stream.write(JSON.stringify(result, null, '\t'));
                   if (m === langs.length - 1) {
+                      console.log("Resorce JSON files created successfully.".green.bold)
                       callback(null, result);
+
                   }
               } else {
                   callback(null, result);
@@ -92,4 +139,8 @@ CV.prototype.cvjson = function (csv, outputdir, callback) {
       .on('error', function (error) {
           console.error(error.message);
       });
+    }
+    catch(ex){
+
+    }
 }

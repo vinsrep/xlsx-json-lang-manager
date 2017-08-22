@@ -17,7 +17,10 @@ Sample xlsx file in 'sample\sample.xslx'
   xlsxj = require("xlsx-json-lang-manager");
   xlsxj({
     input: "sample.xlsx", 
-    outputdir: "./output"
+    outputdir: "./output",
+    objectLevel: 3,
+    numberOfLanguages: 3,
+    allowDuplicateValues: true
   }, function(err, result) {
     if(err) {
       console.error(err);
