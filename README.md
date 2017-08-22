@@ -3,7 +3,7 @@
 Easy way to manage language files in one place using xslx/csv.
 
 ````
-Sample xlsx file in 'sample\sample.xslx'
+Sample csv file in 'sample\sample.csv'
 ````
 ## Install
 
@@ -16,7 +16,7 @@ Sample xlsx file in 'sample\sample.xslx'
 ```javascript
   xlsxj = require("xlsx-json-lang-manager");
   xlsxj({
-    input: "sample.xlsx", 
+    input: "sample.csv", 
     outputdir: "./output",
     objectLevel: 3,
     numberOfLanguages: 3,
