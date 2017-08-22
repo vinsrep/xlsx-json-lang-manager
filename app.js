@@ -3,7 +3,7 @@ xlsxj = require("./index");
     input: "sample/sample.csv", 
     outputdir: "sample",
     objectLevel: 3,
-    numberOfLanguages: 3,
+    numberOfLanguages: 4,
     allowDuplicateValues: true
   }, function(err, result) {
     if(err) {

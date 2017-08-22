@@ -49,7 +49,7 @@ CV.prototype.cvjson = function (csv, outputdir, callback, objectLevel, numberOfL
     try {
     cvcsv().from.string(csv)
       .on('record', function (row, index) {
-          row.splice((objectLevel + numberOfLanguages))
+          row.splice((objectLevel + numberOfLanguages));
           if (index === 0) {
               row.splice(0, objectLevel);
               row.forEach(function (element, ln) {
